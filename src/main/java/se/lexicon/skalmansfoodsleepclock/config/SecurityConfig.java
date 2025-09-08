@@ -57,15 +57,12 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authManager(
-            HttpSecurity http,
-            PasswordEncoder passwordEncoder,
-            UserDetailsServiceImp userDetailsService) throws Exception {
-
+    public AuthenticationManager authManager(HttpSecurity http,
+                                             PasswordEncoder passwordEncoder,
+                                             UserDetailsServiceImp userDetailsService) throws Exception {
         AuthenticationManagerBuilder authBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
         authBuilder.userDetailsService(userDetailsService)
                 .passwordEncoder(passwordEncoder);
-
         return authBuilder.build();
     }
 

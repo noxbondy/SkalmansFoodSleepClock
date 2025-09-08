@@ -25,6 +25,21 @@ public class AuthServiceImpI implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
+
+    private void validatePassword(String password) {
+        String passwordPattern =
+                "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$";
+
+        if (!password.matches(passwordPattern)) {
+            throw new RuntimeException(
+                    "Password must be at least 8 characters long, " +
+                            "contain at least one uppercase letter, one lowercase letter, " +
+                            "one digit, and one special character"
+            );
+        }
+    }
+
+
     @Override
     public User register(RegisterRequestDto dto, String roleName) {
         if (userRepository.existsByPersonalNumber(dto.personalNumber())) {
@@ -34,9 +49,12 @@ public class AuthServiceImpI implements AuthService {
             throw new RuntimeException("Email already exists");
         }
 
+        // ✅ Validate password strength
+        validatePassword(dto.password());
+
         Role role;
         try {
-            role = Role.valueOf(roleName.toUpperCase()); // Convert string to enum
+            role = Role.valueOf(roleName.toUpperCase());
         } catch (IllegalArgumentException e) {
             throw new RuntimeException("Invalid role: " + roleName);
         }
@@ -50,8 +68,8 @@ public class AuthServiceImpI implements AuthService {
                 .phoneNumber(dto.phoneNumber())
                 .address(dto.address())
                 .email(dto.email())
-                .password(passwordEncoder.encode(dto.password())) // ✅ encode password
-                .role(role) // ✅ assign role
+                .password(passwordEncoder.encode(dto.password())) // ✅ store encoded
+                .role(role)
                 .build();
 
         return userRepository.save(user);
