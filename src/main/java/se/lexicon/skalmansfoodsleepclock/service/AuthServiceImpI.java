@@ -120,6 +120,15 @@ public class AuthServiceImpI implements AuthService {
         userRepository.save(user);
         return UserDto.fromEntity(user);
     }
+
+
+    @Override
+    @Transactional
+    public void deleteUser(String personalNumber) {
+        User user = userRepository.findByPersonalNumber(personalNumber)
+                .orElseThrow(() -> new RuntimeException("User not found with personal number: " + personalNumber));
+        userRepository.delete(user);
+    }
 }
 
 

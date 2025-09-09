@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -36,9 +37,10 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
+                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // ✅ enable cors here
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/", // ✅ allow root access
+                                "/",
                                 "/auth/register",
                                 "/auth/login",
                                 "/auth/{personalNumber}",
@@ -51,25 +53,33 @@ public class SecurityConfig {
                                 "/swagger-resources/**",
                                 "/webjars/**"
                         ).permitAll()
+                        .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll() // ✅ allow preflight
                         .anyRequest().authenticated()
                 )
                 .build();
     }
 
     @Bean
-    public AuthenticationManager authManager(HttpSecurity http,
-                                             PasswordEncoder passwordEncoder,
-                                             UserDetailsServiceImp userDetailsService) throws Exception {
+    public AuthenticationManager authManager(
+            HttpSecurity http,
+            PasswordEncoder passwordEncoder,
+            UserDetailsServiceImp userDetailsService) throws Exception {
+
         AuthenticationManagerBuilder authBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
-        authBuilder.userDetailsService(userDetailsService)
-                .passwordEncoder(passwordEncoder);
+        authBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
+
         return authBuilder.build();
     }
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOriginPatterns(List.of("*"));
+        config.setAllowedOrigins(List.of(
+                "http://localhost:5173",
+                "http://localhost:3000",
+                "https://clock-react-self.vercel.app",
+                "https://clock-react-qfqbn4loq-md-gulam-noxbondys-projects.vercel.app"
+        ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
@@ -78,8 +88,4 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", config);
         return source;
     }
-
-
-
-
 }

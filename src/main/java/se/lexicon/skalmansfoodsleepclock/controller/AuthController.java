@@ -18,7 +18,7 @@ import se.lexicon.skalmansfoodsleepclock.service.AuthService;
 import java.util.List;
 import java.util.Optional;
 
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "https://clock-react-eight.vercel.app")
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -26,7 +26,7 @@ public class AuthController {
 
 @Autowired
     private final AuthService authService;
-@Autowired
+    @Autowired
     private final UserRepository userRepository;
 
 
@@ -95,5 +95,12 @@ public class AuthController {
                 .map(UserDto::fromEntity)
                 .toList();
         return ResponseEntity.ok(users);
+    }
+
+    // ✅ Delete user
+    @DeleteMapping("/{personalNumber}")
+    public ResponseEntity<Void> deleteUser(@PathVariable String personalNumber) {
+        authService.deleteUser(personalNumber);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -17,6 +17,7 @@ public interface AuthService {
     Optional<User> findByEmailIgnoreCase(String email);
     UserDto updateUserRole(String personalNumber, Role role);
     List<UserDto> findAllUsers();
+    void deleteUser(String personalNumber);
 }
 
 
