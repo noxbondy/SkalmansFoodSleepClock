@@ -13,8 +13,13 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("https://clock-react-qfqbn4loq-md-gulam-noxbondys-projects.vercel.app")
-                        .allowedMethods("GET","POST","PUT","DELETE","OPTIONS");
+                        .allowedOrigins(
+                                "http://localhost:5173",
+                                "https://clock-react-qfqbn4loq-md-gulam-noxbondys-projects.vercel.app"
+                        )
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowedHeaders("*")
+                        .allowCredentials(true);
             }
         };
     }
