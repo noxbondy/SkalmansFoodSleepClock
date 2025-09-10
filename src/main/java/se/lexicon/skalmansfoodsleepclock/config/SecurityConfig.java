@@ -42,7 +42,7 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/",
                                 "/auth/register",
-                                "/https://skalman.herokuapp.com/auth/login",
+                                "/auth/login",
                                 "/auth/{personalNumber}",
                                 "/api/meals/**",
                                 "/api/reminders/**",
