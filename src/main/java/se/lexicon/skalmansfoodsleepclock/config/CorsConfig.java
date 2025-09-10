@@ -19,7 +19,8 @@ public class CorsConfig {
         // Allow localhost for dev + all Vercel URLs
         config.setAllowedOriginPatterns(List.of(
                 "http://localhost:*",
-                "https://*.vercel.app"
+                "https://*.vercel.app",
+                "https://clock-react-eight.vercel.app"
         ));
 
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
