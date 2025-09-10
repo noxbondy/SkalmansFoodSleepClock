@@ -34,10 +34,10 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        return http
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(cors -> cors.configurationSource(null)) // use global CorsConfig bean
+                .cors(Customizer.withDefaults()) // Uses global CorsConfigurationSource bean
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/",
@@ -53,21 +53,16 @@ public class SecurityConfig {
                                 "/swagger-resources/**",
                                 "/webjars/**"
                         ).permitAll()
-                        .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().authenticated()
-                )
-                .build();
+                );
+
+        return http.build();
     }
 
     @Bean
-    public AuthenticationManager authManager(
-            HttpSecurity http,
-            PasswordEncoder passwordEncoder,
-            UserDetailsServiceImp userDetailsService) throws Exception {
-
+    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
         AuthenticationManagerBuilder authBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
-        authBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
-
+        authBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
         return authBuilder.build();
     }
 }
