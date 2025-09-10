@@ -15,16 +15,11 @@ public class CorsConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-
-        // ✅ List all frontend origins explicitly
-        config.setAllowedOrigins(List.of(
-                "http://localhost:5173",
-                "http://localhost:3000",
+        config.setAllowedOriginPatterns(List.of(
+                "http://localhost:*",
                 "https://clock-react-eight.vercel.app",
-                "https://clock-react-w8g1mngzp-md-gulam-noxbondys-projects.vercel.app",
-                "https://clock-react-dgi23yoay-md-gulam-noxbondys-projects.vercel.app"
+                "https://*.vercel.app" // allows any Vercel preview URL
         ));
-
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
