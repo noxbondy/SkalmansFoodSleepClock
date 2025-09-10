@@ -9,7 +9,7 @@ import se.lexicon.skalmansfoodsleepclock.service.MealService;
 
 
 import java.util.List;
-@CrossOrigin(origins = "https://clock-react-eight.vercel.app")
+@CrossOrigin(origins = "https://clock-react.vercel.app")
 @RestController
 @RequestMapping("/api/meals")
 @RequiredArgsConstructor

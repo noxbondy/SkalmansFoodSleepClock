@@ -18,7 +18,7 @@ import se.lexicon.skalmansfoodsleepclock.service.AuthService;
 import java.util.List;
 import java.util.Optional;
 
-@CrossOrigin(origins = "https://clock-react-eight.vercel.app")
+@CrossOrigin(origins = "https://clock-react.vercel.app")
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor

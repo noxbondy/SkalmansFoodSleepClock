@@ -10,7 +10,7 @@ import se.lexicon.skalmansfoodsleepclock.dto.UserDto;
 import se.lexicon.skalmansfoodsleepclock.service.AssigneeTaskService;
 
 import java.util.List;
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "https://clock-react.vercel.app")
 @RestController
 @RequestMapping("/api/tasks")
 @RequiredArgsConstructor
