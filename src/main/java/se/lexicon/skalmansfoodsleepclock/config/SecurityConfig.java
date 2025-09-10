@@ -77,7 +77,8 @@ public class SecurityConfig {
         config.setAllowedOrigins(List.of(
                 "http://localhost:5173",
                 "http://localhost:3000",
-                "https://clock-react-eight.vercel.app" // ✅ add this
+                "https://clock-react-eight.vercel.app",
+                "https://clock-react-w8g1mngzp-md-gulam-noxbondys-projects.vercel.app" // ✅ your current Vercel URL
         ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
