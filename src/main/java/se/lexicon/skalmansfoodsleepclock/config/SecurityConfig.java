@@ -27,6 +27,7 @@ import java.util.List;
 public class SecurityConfig {
 
     private final UserDetailsServiceImp userDetailsService;
+    private final CorsConfigurationSource corsConfigurationSource;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -35,9 +36,9 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        return http
+        http
                 .csrf(csrf -> csrf.disable())
-                .cors(Customizer.withDefaults()) // uses CorsConfigurationSource bean
+                .cors(cors -> cors.configurationSource(corsConfigurationSource)) // ✅ use CorsConfig
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/",
@@ -45,8 +46,9 @@ public class SecurityConfig {
                                 "/auth/login"
                         ).permitAll()
                         .anyRequest().authenticated()
-                )
-                .build();
+                );
+
+        return http.build();
     }
 
     @Bean
