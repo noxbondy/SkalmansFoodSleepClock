@@ -17,11 +17,11 @@ public class CorsConfig {
                                 "http://localhost:5173",
                                 "http://localhost:3000",
                                 "https://clock-react-eight.vercel.app",
-                                "https://clock-react-self.vercel.app"
+                                "https://clock-react-w8g1mngzp-md-gulam-noxbondys-projects.vercel.app" // ✅ add this one
                         )
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
-                        .allowCredentials(true); // important for cookies/auth
+                        .allowCredentials(true);
             }
         };
     }
