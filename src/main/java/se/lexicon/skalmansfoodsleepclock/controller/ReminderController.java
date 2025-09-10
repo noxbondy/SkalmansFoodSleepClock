@@ -14,7 +14,7 @@ import se.lexicon.skalmansfoodsleepclock.service.AuthService;
 import se.lexicon.skalmansfoodsleepclock.service.ReminderService;
 
 import java.util.List;
-@CrossOrigin(origins = "https://clock-react.vercel.app")
+@CrossOrigin(origins = "https://skalman-clock-aa66170cc60e.herokuapp.com")
 @RestController
 @RequestMapping("/api/reminders")
 @RequiredArgsConstructor
