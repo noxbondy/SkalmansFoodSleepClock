@@ -18,7 +18,7 @@ import se.lexicon.skalmansfoodsleepclock.service.AuthService;
 import java.util.List;
 import java.util.Optional;
 
-@CrossOrigin(origins = "https://skalman-clock-aa66170cc60e.herokuapp.com")
+
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor

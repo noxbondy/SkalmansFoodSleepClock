@@ -9,7 +9,7 @@ import se.lexicon.skalmansfoodsleepclock.service.MealService;
 
 
 import java.util.List;
-@CrossOrigin(origins = "https://skalman-clock-aa66170cc60e.herokuapp.com")
+
 @RestController
 @RequestMapping("/meals")
 @RequiredArgsConstructor
