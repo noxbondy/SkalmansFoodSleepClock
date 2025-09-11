@@ -53,7 +53,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll() // login/register public
+                        .requestMatchers("/api/auth/**").permitAll() // login/register public
                         .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults()); // ✅ updated syntax
