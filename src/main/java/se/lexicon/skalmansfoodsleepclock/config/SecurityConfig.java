@@ -53,7 +53,19 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll() // login/register public
+                        .requestMatchers
+                                (
+                                        "/auth/**",
+                                        "/register/**",
+                                        "/login/**",
+                                        "/meals/**",
+                                        "/reminders/**",
+                                        "/swagger-ui.html",
+                                        "/swagger-ui/**",
+                                        "/v3/api-docs/**"
+
+                                ).
+                        permitAll() // login/register public
                         .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults()); // ✅ updated syntax

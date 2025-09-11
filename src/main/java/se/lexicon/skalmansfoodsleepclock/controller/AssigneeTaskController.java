@@ -12,7 +12,7 @@ import se.lexicon.skalmansfoodsleepclock.service.AssigneeTaskService;
 import java.util.List;
 @CrossOrigin(origins = "https://clock-react.vercel.app")
 @RestController
-@RequestMapping("/api/tasks")
+@RequestMapping("/tasks")
 @RequiredArgsConstructor
 public class AssigneeTaskController {
 
