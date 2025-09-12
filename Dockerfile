@@ -20,4 +20,4 @@ RUN ./mvnw clean package -DskipTests
 
 # Expose port and run
 EXPOSE 8080
-CMD ["java", "-jar", "target/your-app.jar"]
+CMD ["java", "-jar", "target/SkalmansFoodSleepClock-0.0.1-SNAPSHOT.jar"]
