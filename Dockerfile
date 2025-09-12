@@ -1,21 +1,23 @@
-# Use official OpenJDK image
-FROM eclipse-temurin:17-jdk-alpine
+# Use a Java image
+FROM openjdk:17-jdk-slim
 
-# Set working directory inside container
+# Set working directory
 WORKDIR /app
 
-# Copy Maven wrapper & pom.xml first for caching
-COPY .mvn/ .mvn
-COPY mvnw pom.xml ./
+# Copy Maven wrapper and pom.xml first (for caching)
+COPY mvnw .
+COPY .mvn .mvn
+COPY pom.xml .
 
-# Download dependencies
-RUN ./mvnw dependency:go-offline
+# Make mvnw executable
+RUN chmod +x mvnw
 
-# Copy source code
+# Copy the rest of the project
 COPY src ./src
 
-# Build the app (skip tests for faster build)
+# Build the app
 RUN ./mvnw clean package -DskipTests
 
-# Run the app
-CMD ["java", "-jar", "target/*.jar"]
+# Expose port and run
+EXPOSE 8080
+CMD ["java", "-jar", "target/your-app.jar"]
