@@ -62,6 +62,7 @@ public class SecurityConfig {
         ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
+        config.setAllowCredentials(true);
         // ✅ No credentials needed, so no setAllowCredentials()
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
