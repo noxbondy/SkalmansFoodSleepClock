@@ -44,12 +44,14 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
-                .cors(Customizer.withDefaults()) // Use default CORS configuration from WebMvcConfigurer
+                .cors(Customizer.withDefaults()) // Uses WebMvcConfigurer CORS settings
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**",           // your login/register endpoints
-                                "/",                  // root path (optional)
-                                "/actuator/health")
-                        .permitAll()
+                        .requestMatchers(
+                                "/auth/**",           // login/register endpoints
+                                "/",                  // root path
+                                "/actuator/health"    // health check
+                        ).permitAll()
+                        .anyRequest().authenticated() // all other requests require authentication
                 );
         return http.build();
     }
