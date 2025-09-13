@@ -44,15 +44,19 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
-                .cors(Customizer.withDefaults()) // Uses WebMvcConfigurer CORS settings
+                .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/auth/**",           // login/register endpoints
-                                "/",                  // root path
-                                "/actuator/health"    // health check
+                                "/",                     // root path
+                                "/auth/**",              // login/register
+                                "/actuator/health",      // health check
+                                "/favicon.ico",          // optional for browser
+                                "/error"                 // default Spring error page
                         ).permitAll()
-                        .anyRequest().authenticated() // all other requests require authentication
-                );
+                        .anyRequest().authenticated() // protect everything else
+                )
+                .httpBasic(Customizer.withDefaults());
+
         return http.build();
     }
 
