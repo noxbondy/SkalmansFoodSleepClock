@@ -48,8 +48,13 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
                         // allow root and static resources
-                        .requestMatchers("/", "/index.html", "/css/**", "/js/**", "/images/**").permitAll()
-                        .requestMatchers("/auth/**", "/actuator/health").permitAll()
+                        .requestMatchers(
+                                "/",                  // root
+                                "/index.html",        // main HTML
+                                "/assets/**",         // all static assets (Vite default)
+                                "/auth/**",           // your API login/register endpoints
+                                "/actuator/health"    // health check for Render
+                        ).permitAll()
                         .anyRequest().authenticated()
                 );
         return http.build();
