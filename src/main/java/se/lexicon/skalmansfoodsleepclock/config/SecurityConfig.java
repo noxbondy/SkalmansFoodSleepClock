@@ -41,38 +41,49 @@ public class SecurityConfig {
         return authBuilder.build();
     }
 
+    // Security filter chain
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
-                .cors(Customizer.withDefaults())
+                .cors(Customizer.withDefaults()) // Enable CORS using WebMvcConfigurer
                 .authorizeHttpRequests(auth -> auth
-                        // allow root and static resources
+                        // Allow React static resources, API endpoints, and health check
                         .requestMatchers(
-                                "/",                  // root
-                                "/index.html",        // main HTML
-                                "/assets/**",         // all static assets (Vite default: JS, CSS, images)
-                                "/auth/**",           // your API login/register endpoints
-                                "/actuator/health",   // health check for Render
-                                "/favicon.ico",       // optional: favicon
-                                "/**/*.js",           // all JS files
-                                "/**/*.css",          // all CSS files
-                                "/**/*.png",          // images
-                                "/**/*.svg",
-                                "/**/*.ico",
-                                "/**/*.json"
+                                "/",
+                                "/index.html",
+                                "/assets/**",           // Vite assets
+                                "/manifest.webmanifest",
+                                "/favicon.ico",
+                                "/auth/**",
+                                "/actuator/health"
                         ).permitAll()
-                        .anyRequest().authenticated()
+                        .anyRequest().authenticated() // All other endpoints require authentication
                 );
         return http.build();
     }
 
+    // Global CORS and React routing fallback
     @Bean
-    public WebMvcConfigurer corsConfigurer() {
+    public WebMvcConfigurer webMvcConfigurer() {
         return new WebMvcConfigurer() {
+
+            // CORS configuration
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**")
+                        .allowedOrigins(
+                                "http://localhost:5173",           // local React dev
+                                "https://skalmansfoodsleepclock.onrender.com" // deployed frontend
+                        )
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowedHeaders("*")
+                        .allowCredentials(true); // must not use "*"
+            }
+
+            // React router fallback
             @Override
             public void addViewControllers(ViewControllerRegistry registry) {
-                // Fallback: redirect all unmapped routes to index.html
                 registry.addViewController("/{spring:[a-zA-Z0-9-_]+}")
                         .setViewName("forward:/index.html");
                 registry.addViewController("/**/{spring:[a-zA-Z0-9-_]+}")
