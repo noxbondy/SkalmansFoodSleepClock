@@ -15,6 +15,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import se.lexicon.skalmansfoodsleepclock.service.UserDetailsServiceImp;
 
@@ -46,9 +47,9 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "/", "/auth/**", "/actuator/health"
-                        ).permitAll()
+                        // allow root and static resources
+                        .requestMatchers("/", "/index.html", "/css/**", "/js/**", "/images/**").permitAll()
+                        .requestMatchers("/auth/**", "/actuator/health").permitAll()
                         .anyRequest().authenticated()
                 );
         return http.build();
@@ -57,12 +58,13 @@ public class SecurityConfig {
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:5173", "https://your-frontend.com")
-                        .allowedMethods("GET","POST","PUT","DELETE","OPTIONS")
-                        .allowedHeaders("*")
-                        .allowCredentials(true);
+            @Override
+            public void addViewControllers(ViewControllerRegistry registry) {
+                // Fallback: redirect all unmapped routes to index.html
+                registry.addViewController("/{spring:[a-zA-Z0-9-_]+}")
+                        .setViewName("forward:/index.html");
+                registry.addViewController("/**/{spring:[a-zA-Z0-9-_]+}")
+                        .setViewName("forward:/index.html");
             }
         };
     }
