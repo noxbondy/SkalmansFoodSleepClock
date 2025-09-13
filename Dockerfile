@@ -1,10 +1,10 @@
-# Use a Java image
+# Use a Java 17 slim image
 FROM openjdk:17-jdk-slim
 
 # Set working directory
 WORKDIR /app
 
-# Copy Maven wrapper and pom.xml first (for caching)
+# Copy Maven wrapper & pom.xml first (for caching)
 COPY mvnw .
 COPY .mvn .mvn
 COPY pom.xml .
@@ -12,12 +12,14 @@ COPY pom.xml .
 # Make mvnw executable
 RUN chmod +x mvnw
 
-# Copy the rest of the project
+# Copy source code
 COPY src ./src
 
-# Build the app
+# Build the project
 RUN ./mvnw clean package -DskipTests
 
-# Expose port and run
+# Expose default port (optional)
 EXPOSE 8080
-CMD ["java", "-jar", "target/SkalmansFoodSleepClock-0.0.1-SNAPSHOT.jar"]
+
+# Run the application with Render's dynamic PORT
+CMD ["sh", "-c", "java -Dserver.port=$PORT -jar target/SkalmansFoodSleepClock-0.0.1-SNAPSHOT.jar"]
