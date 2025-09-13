@@ -46,7 +46,9 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .cors(Customizer.withDefaults()) // Use default CORS configuration from WebMvcConfigurer
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**")
+                        .requestMatchers("/auth/**",           // your login/register endpoints
+                                "/",                  // root path (optional)
+                                "/actuator/health")
                         .permitAll()
                 );
         return http.build();
@@ -58,7 +60,7 @@ public class SecurityConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("*")
+                        .allowedOrigins("http://localhost:5173", "https://skalmansfoodsleepclock.onrender.com")
                         .allowedMethods("GET","POST","PUT","DELETE","OPTIONS")
                         .allowedHeaders("*");
             }
