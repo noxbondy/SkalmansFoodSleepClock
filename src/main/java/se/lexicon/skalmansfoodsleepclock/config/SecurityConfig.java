@@ -47,16 +47,10 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/",                     // root path
-                                "/auth/**",              // login/register
-                                "/actuator/health",      // health check
-                                "/favicon.ico",          // optional for browser
-                                "/error"                 // default Spring error page
+                                "/", "/auth/**", "/actuator/health"
                         ).permitAll()
-                        .anyRequest().authenticated() // protect everything else
-                )
-                .httpBasic(Customizer.withDefaults());
-
+                        .anyRequest().authenticated()
+                );
         return http.build();
     }
 
@@ -66,9 +60,10 @@ public class SecurityConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:5173", "https://skalmansfoodsleepclock.onrender.com")
+                        .allowedOrigins("*")  // or your frontend URL
                         .allowedMethods("GET","POST","PUT","DELETE","OPTIONS")
-                        .allowedHeaders("*");
+                        .allowedHeaders("*")
+                        .allowCredentials(true);
             }
         };
     }

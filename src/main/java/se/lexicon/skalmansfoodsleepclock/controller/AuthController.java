@@ -8,6 +8,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import se.lexicon.skalmansfoodsleepclock.Entity.Role;
+import se.lexicon.skalmansfoodsleepclock.InvalidCredentialsException;
 import se.lexicon.skalmansfoodsleepclock.dto.LoginRequestDto;
 import se.lexicon.skalmansfoodsleepclock.dto.RegisterRequestDto;
 import se.lexicon.skalmansfoodsleepclock.Entity.User;
@@ -15,7 +16,9 @@ import se.lexicon.skalmansfoodsleepclock.dto.UserDto;
 import se.lexicon.skalmansfoodsleepclock.repository.UserRepository;
 import se.lexicon.skalmansfoodsleepclock.service.AuthService;
 
+
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -24,9 +27,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AuthController {
 
-@Autowired
     private final AuthService authService;
-    @Autowired
+
     private final UserRepository userRepository;
 
 
@@ -42,12 +44,16 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UserDto> login(@RequestBody LoginRequestDto request) {
+    public ResponseEntity<?> login(@RequestBody LoginRequestDto request) {
         try {
             UserDto userDto = authService.login(request);
             return ResponseEntity.ok(userDto);
+        } catch (InvalidCredentialsException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", e.getMessage()));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Server error"));
         }
     }
 
