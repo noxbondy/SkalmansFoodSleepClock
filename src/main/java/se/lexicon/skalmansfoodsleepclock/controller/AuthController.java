@@ -72,29 +72,30 @@ public class AuthController {
     }
 
     // ✅ Update user role
-    @PutMapping("/users/{personalNumber}/role")
-    public ResponseEntity<UserDto> updateUserRole(
+    @PutMapping("/users/{personalNumber}")
+    public ResponseEntity<UserDto> updateUser(
             @PathVariable String personalNumber,
-            @RequestParam String roleName) {
+            @RequestBody RegisterRequestDto dto) {
 
         User user = userRepository.findByPersonalNumber(personalNumber)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        Role role;
-        try {
-            role = Role.valueOf(roleName.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Invalid role: " + roleName);
-        }
+        user.setFirstName(dto.firstName());
+        user.setLastName(dto.lastName());
+        user.setEmail(dto.email());
+        user.setPhoneNumber(dto.phoneNumber());
+        user.setAddress(dto.address());
+        user.setGender(dto.gender());
+        user.setDateOfBirth(dto.dateOfBirth());
+        // optional: update role separately if needed
 
-        user.setRole(role);
         userRepository.save(user);
 
         return ResponseEntity.ok(UserDto.fromEntity(user));
     }
 
     // ✅ Get all users
-    @GetMapping("/users")
+    @GetMapping("/auth/users")
     public ResponseEntity<List<UserDto>> getAllUsers() {
         List<UserDto> users = userRepository.findAll()
                 .stream()

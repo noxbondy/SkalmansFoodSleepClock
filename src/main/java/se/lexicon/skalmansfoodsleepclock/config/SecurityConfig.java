@@ -1,25 +1,22 @@
 package se.lexicon.skalmansfoodsleepclock.config;
 
+
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import se.lexicon.skalmansfoodsleepclock.service.UserDetailsServiceImp;
-
-import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -28,56 +25,95 @@ public class SecurityConfig {
 
     private final UserDetailsServiceImp userDetailsService;
 
+    // Password encoder
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    // Authentication manager
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
         AuthenticationManagerBuilder authBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
         authBuilder.userDetailsService(userDetailsService)
                 .passwordEncoder(passwordEncoder());
+
+        // Build the AuthenticationManager directly (no .and())
         return authBuilder.build();
     }
 
+    // Security filter chain
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
-                .cors(Customizer.withDefaults())
+                .cors(cors -> {}) // use global CORS
                 .authorizeHttpRequests(auth -> auth
-                        // allow root and static resources
+                        // Swagger + API docs + public endpoints
                         .requestMatchers(
-                                "/",                  // root
-                                "/index.html",        // main HTML
-                                "/assets/**",         // all static assets (Vite default: JS, CSS, images)
-                                "/auth/**",           // your API login/register endpoints
-                                "/actuator/health",   // health check for Render
-                                "/favicon.ico",       // optional: favicon
-                                "/**/*.js",           // all JS files
-                                "/**/*.css",          // all CSS files
-                                "/**/*.png",          // images
-                                "/**/*.svg",
-                                "/**/*.ico",
-                                "/**/*.json"
+                                "/swagger-ui.html",
+                                "/swagger-ui/index.html",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/auth/**",
+                                "/actuator/health",
+                                "/meals/**",
+                                "/reminders/**",
+                                "/tasks/**",
+                                "/chat/**",
+                                "/users/**",
+                                "/{mealId}/**"
                         ).permitAll()
-                        .anyRequest().authenticated()
+                        .anyRequest().authenticated() // protect everything else
                 );
+
+        // No formLogin or httpBasic → no browser login prompt
         return http.build();
     }
 
+    // Web MVC Configurer for React routing + CORS
     @Bean
-    public WebMvcConfigurer corsConfigurer() {
+    public WebMvcConfigurer webMvcConfigurer() {
         return new WebMvcConfigurer() {
+
+            // CORS config
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**")
+                        .allowedOrigins(
+                                "http://localhost:5173",           // local frontend
+                                "https://skalmansfoodsleepclock.onrender.com" // deployed frontend
+                        )
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowedHeaders("*")
+                        .allowCredentials(true);
+            }
+
+            // React router fallback excluding Swagger / API docs
             @Override
             public void addViewControllers(ViewControllerRegistry registry) {
-                // Fallback: redirect all unmapped routes to index.html
-                registry.addViewController("/{spring:[a-zA-Z0-9-_]+}")
+                registry.addViewController("/{spring:[^\\.]*}")
                         .setViewName("forward:/index.html");
-                registry.addViewController("/**/{spring:[a-zA-Z0-9-_]+}")
+                registry.addViewController("/**/{spring:[^\\.]*}")
                         .setViewName("forward:/index.html");
             }
         };
     }
+
+    // Swagger / OpenAPI config
+    @Bean
+    public OpenAPI customOpenAPI() {
+        return new OpenAPI()
+                .info(new Info()
+                        .title("Skalman Clock API")
+                        .version("1.0")
+                        .description("API for Skalman's Food Sleep Clock"));
+    }
 }
+
+
+
+
+
+
+

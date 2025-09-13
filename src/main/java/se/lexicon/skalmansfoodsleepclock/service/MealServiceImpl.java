@@ -20,6 +20,8 @@ public class MealServiceImpl implements MealService {
     private final UserRepository userRepository;
 
 
+
+
     @Override
     @Transactional
     public MealDto createMeal(String personalNumber, MealDto mealDto) {
@@ -43,6 +45,8 @@ public class MealServiceImpl implements MealService {
                 .map(MealDto::fromEntity)
                 .collect(Collectors.toList());
     }
+
+
 
     @Override
     @Transactional
