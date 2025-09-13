@@ -51,9 +51,16 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/",                  // root
                                 "/index.html",        // main HTML
-                                "/assets/**",         // all static assets (Vite default)
+                                "/assets/**",         // all static assets (Vite default: JS, CSS, images)
                                 "/auth/**",           // your API login/register endpoints
-                                "/actuator/health"    // health check for Render
+                                "/actuator/health",   // health check for Render
+                                "/favicon.ico",       // optional: favicon
+                                "/**/*.js",           // all JS files
+                                "/**/*.css",          // all CSS files
+                                "/**/*.png",          // images
+                                "/**/*.svg",
+                                "/**/*.ico",
+                                "/**/*.json"
                         ).permitAll()
                         .anyRequest().authenticated()
                 );
