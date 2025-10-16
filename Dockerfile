@@ -23,3 +23,4 @@ EXPOSE 8080
 
 # Run the application with Render's dynamic PORT
 CMD ["sh", "-c", "java -Dserver.port=$PORT -jar target/SkalmansFoodSleepClock-0.0.1-SNAPSHOT.jar"]
+FROM eclipse-temurin:17-jdk-jammy
