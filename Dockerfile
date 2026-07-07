@@ -1,7 +1,6 @@
-# Use a Java 17 slim image
-FROM openjdk:17-jdk-slim
+# ---- Build stage ----
+FROM eclipse-temurin:17-jdk-jammy AS build
 
-# Set working directory
 WORKDIR /app
 
 # Copy Maven wrapper & pom.xml first (for caching)
@@ -9,7 +8,6 @@ COPY mvnw .
 COPY .mvn .mvn
 COPY pom.xml .
 
-# Make mvnw executable
 RUN chmod +x mvnw
 
 # Copy source code
@@ -18,9 +16,13 @@ COPY src ./src
 # Build the project
 RUN ./mvnw clean package -DskipTests
 
-# Expose default port (optional)
+# ---- Run stage ----
+FROM eclipse-temurin:17-jre-jammy
+
+WORKDIR /app
+
+COPY --from=build /app/target/SkalmansFoodSleepClock-0.0.1-SNAPSHOT.jar app.jar
+
 EXPOSE 8080
 
-# Run the application with Render's dynamic PORT
-CMD ["sh", "-c", "java -Dserver.port=$PORT -jar target/SkalmansFoodSleepClock-0.0.1-SNAPSHOT.jar"]
-FROM eclipse-temurin:17-jdk-jammy
+CMD ["sh", "-c", "java -Dserver.port=$PORT -jar app.jar"]
