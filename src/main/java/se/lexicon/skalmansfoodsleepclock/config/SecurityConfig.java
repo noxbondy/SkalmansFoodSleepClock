@@ -45,31 +45,37 @@ public class SecurityConfig {
     // Security filter chain
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
         http
                 .csrf(csrf -> csrf.disable())
-                .cors(cors -> {}) // use global CORS
+                .cors(cors -> {})
                 .authorizeHttpRequests(auth -> auth
-                        // Swagger + API docs + public endpoints
                         .requestMatchers(
+                                "/",
+                                "/index.html",
+                                "/assets/**",
+
+                                // Swagger
                                 "/swagger-ui.html",
-                                "/swagger-ui/index.html",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
+
+                                // Public APIs
                                 "/auth/**",
                                 "/actuator/health",
                                 "/meals/**",
                                 "/reminders/**",
                                 "/tasks/**",
                                 "/chat/**",
-                                "/users/**",
-                                "/{mealId}/**"
+                                "/users/**"
                         ).permitAll()
-                        .anyRequest().authenticated() // protect everything else
+
+                        .anyRequest().authenticated()
                 );
 
-        // No formLogin or httpBasic → no browser login prompt
         return http.build();
     }
+
 
     // Web MVC Configurer for React routing + CORS
     @Bean
